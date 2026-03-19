@@ -1,11 +1,11 @@
 (lang dune 3.22)
 
-(name my-rv32)
+(name my_rv32)
 
 (generate_opam_files true)
 
 (source
- (github al-nf/my-rv32))
+ (github al-nf/my_rv32))
 
 (authors "Alan Fung <alankjfung@gmail.com>")
 
@@ -16,7 +16,7 @@
 (documentation https://url/to/documentation)
 
 (package
- (name my-rv32)
+ (name my_rv32)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml)
