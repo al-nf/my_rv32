@@ -1,0 +1,9 @@
+# Dune
+_build/
+
+# Opam
+_opam/
+
+# OCaml tooling
+.merlin
+*.install
