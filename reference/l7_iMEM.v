@@ -3,18 +3,18 @@ module l7_iMEM(
 	input [7:0] address,
 	output reg [15:0] DataOut
 );
-			  
-	reg [15:0] mem_arr [256:0]; 
-	
+
+	reg [15:0] mem_arr [256:0];
+
 	initial begin
-		$readmemh("imem.txt", mem_arr); 
-		
+		$readmemh("imem.txt", mem_arr);
+
 	end
-	
+
 	always@(*)
 	begin
 		DataOut <= mem_arr[address];
 	end
-	
-	
+
+
 endmodule
