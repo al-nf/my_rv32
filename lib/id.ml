@@ -30,7 +30,7 @@ module Make = struct
 
   let create _scope (i: _ I.t) =
     let opcode = select i.instr 6 0 in
-    let is op = opcode ==: of_int ~width:7 op in
+    let is op = opcode ==:. op in
     {
       O.rs1 = select i.instr 19 15;
       O.rs2 = select i.instr 24 20;

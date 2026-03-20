@@ -20,7 +20,7 @@ module Make = struct
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
     let pc = reg_fb spec ~enable:vdd ~width:32 ~f:(fun pc ->
-      mux2 i.rst (zero 32) (mux2 i.pc_wr i.pc_in (pc +: of_int ~width:32 4))
+      mux2 i.rst (zero 32) (mux2 i.pc_wr i.pc_in (pc +:. 4))
     ) in
     { O.pc_out = pc }
 
