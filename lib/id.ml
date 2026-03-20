@@ -14,7 +14,6 @@ module Make = struct
       rs2: 'a; [@bits 5]
       rd: 'a; [@bits 5]
       funct3: 'a; [@bits 3]
-      funct7: 'a; [@bits 7]
       opcode: 'a; [@bits 7]
 
       mem_rd: 'a; [@bits 1]
@@ -23,7 +22,7 @@ module Make = struct
       branch: 'a; [@bits 1]
       jal: 'a; [@bits 1]
       jalr: 'a; [@bits 1]
-      alu_op: 'a; [@bits 4] (* will decide this later *)
+      arith: 'a; [@bits 1] (* 0 for add/srl, 1 for sub/sra *)
       alu_src: 'a; [@bits 1]
       mem_to_reg : 'a; [@bits 1]
     } [@@deriving hardcaml]
@@ -37,7 +36,6 @@ module Make = struct
       O.rs2 = select i.instr 24 20;
       O.rd = select i.instr 11 7;
       O.funct3 = select i.instr 14 12;
-      O.funct7 = select i.instr 31 25;
       O.opcode = opcode;
       O.mem_rd = is 0b0000011;
       O.mem_wr = is 0b0100011;
@@ -45,7 +43,7 @@ module Make = struct
       O.branch = is 0b1100011;
       O.jal = is 0b1101111;
       O.jalr = is 0b1100111;
-      O.alu_op = of_int ~width:4 0b0000; (* CHANGE THIS DURING ALU DESIGN *)
+      O.arith = select i.instr 30 30;
       O.alu_src = ~: (is 0b0110011);
       O.mem_to_reg = is 0b0000011;
     }
