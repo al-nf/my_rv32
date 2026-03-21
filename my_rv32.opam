@@ -10,7 +10,7 @@ homepage: "https://github.com/al-nf/my_rv32"
 doc: "https://url/to/documentation"
 bug-reports: "https://github.com/al-nf/my_rv32/issues"
 depends: [
-  "dune" {>= "3.22"}
+  "dune" {>= "3.21"}
   "ocaml"
   "odoc" {with-doc}
 ]
