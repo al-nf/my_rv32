@@ -18,6 +18,13 @@ module Make = struct
 
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
+
+    (* encoding
+    00 strongly not taken
+    01 weakly not taken
+    10 weakly taken
+    11 strongly taken
+    *)
     let counter = reg_fb spec ~enable:vdd ~width:2 ~f:( fun c ->
       mux2 i.taken (
         mux2 (c ==:. 3)
