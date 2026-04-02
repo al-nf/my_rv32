@@ -21,11 +21,11 @@ module Make = struct
   let create _scope (i: _ I.t) = {
     O.result = Signal.mux i.funct3 [
       mux2 i.arith (i.a -: i.b) (i.a +: i.b);
-      sll i.a (to_int (select i.b 4 0));
+      log_shift sll i.a (select i.b 4 0);
       uresize (i.a <: i.b) 32;
       uresize (i.a <+ i.b) 32;
       i.a ^: i.b;
-      mux2 i.arith (sra i.a (to_int (select i.b 4 0))) (srl i.a (to_int(select i.b 4 0)));
+      mux2 i.arith (log_shift sra i.a (select i.b 4 0)) (log_shift srl i.a (select i.b 4 0));
       i.a |: i.b;
       i.a &: i.b;
     ];

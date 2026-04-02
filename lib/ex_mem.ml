@@ -51,21 +51,21 @@ module Make = struct
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
     let en = ~: (i.stall) in {
-      O.pc = reg spec ~enable:vdd (i.pc &: en);
+      O.pc = reg spec ~enable:vdd (mux2 en i.pc (zero (width i.pc)));
 
-      O.rd = reg spec ~enable:vdd (i.rd &: en);
-      O.funct3 = reg spec ~enable:vdd (i.funct3 &: en);
+      O.rd = reg spec ~enable:vdd (mux2 en i.rd (zero (width i.rd)));
+      O.funct3 = reg spec ~enable:vdd (mux2 en i.funct3 (zero (width i.funct3)));
 
-      O.mem_rd = reg spec ~enable:vdd (i.mem_rd &: en);
-      O.mem_wr = reg spec ~enable:vdd (i.mem_wr &: en);
-      O.reg_wr = reg spec ~enable:vdd (i.reg_wr &: en);
-      O.branch = reg spec ~enable:vdd (i.branch &: en);
-      O.jal = reg spec ~enable:vdd (i.jal &: en);
-      O.jalr = reg spec ~enable:vdd (i.jalr &: en);
-      O.mem_to_reg  = reg spec ~enable:vdd (i.mem_to_reg &: en);
+      O.mem_rd = reg spec ~enable:vdd (mux2 en i.mem_rd (zero (width i.mem_rd)));
+      O.mem_wr = reg spec ~enable:vdd (mux2 en i.mem_wr (zero (width i.mem_wr)));
+      O.reg_wr = reg spec ~enable:vdd (mux2 en i.reg_wr (zero (width i.reg_wr)));
+      O.branch = reg spec ~enable:vdd (mux2 en i.branch (zero (width i.branch)));
+      O.jal = reg spec ~enable:vdd (mux2 en i.jal (zero (width i.jal)));
+      O.jalr = reg spec ~enable:vdd (mux2 en i.jalr (zero (width i.jalr)));
+      O.mem_to_reg  = reg spec ~enable:vdd (mux2 en i.mem_to_reg (zero (width i.mem_to_reg)));
 
-      O.alu_result = reg spec ~enable:vdd (i.alu_result &: en);
-      O.rs2_data = reg spec ~enable:vdd (i.rs2_data &: en);
+      O.alu_result = reg spec ~enable:vdd (mux2 en i.alu_result (zero (width i.alu_result)));
+      O.rs2_data = reg spec ~enable:vdd (mux2 en i.rs2_data (zero (width i.rs2_data)));
     };
 
 end

@@ -29,7 +29,7 @@ module Make = struct
       select i.instr 11 7;
     ];
     O.imm_b = concat_msb [
-      repeat (select i.instr 31 31) 20;
+      repeat (select i.instr 31 31) 19;
       select i.instr 31 31;
       select i.instr 7 7;
       select i.instr 30 25;
