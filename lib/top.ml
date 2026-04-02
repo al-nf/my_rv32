@@ -17,15 +17,15 @@ module Make (Config: sig val size: int end) = struct
   end
 
   let create _scope (i: _ I.t) =
-    let id_ex_mem_rd_w = wireof (zero 1) in
-    let id_ex_rd_w = wireof (zero 5) in
-    let mem_wb_rd_w = wireof (zero 5) in
-    let mem_wb_reg_wr_w = wireof (zero 1) in
-    let mem_wb_alu_result_w = wireof (zero 32) in
-    let mem_wb_mem_data_w = wireof (zero 32) in
-    let mem_wb_mem_to_reg_w = wireof (zero 1) in
-    let pc_next_w = wireof (zero 32) in
-    let stall_w = wireof (zero 1) in
+    let id_ex_mem_rd_w = wire 1 in
+    let id_ex_rd_w = wire 5 in
+    let mem_wb_rd_w = wire 5 in
+    let mem_wb_reg_wr_w = wire 1 in
+    let mem_wb_alu_result_w = wire 32 in
+    let mem_wb_mem_data_w = wire 32 in
+    let mem_wb_mem_to_reg_w = wire 1 in
+    let pc_next_w = wire 32 in
+    let stall_w = wire 1 in
 
     let pc_out = Pc.Make.create _scope { Pc.Make.I.
       clk = i.clk;
@@ -155,6 +155,7 @@ module Make (Config: sig val size: int end) = struct
     mem_wb_alu_result_w <== mem_wb_out.alu_result;
     mem_wb_mem_data_w <== mem_wb_out.mem_data;
     mem_wb_mem_to_reg_w <== mem_wb_out.mem_to_reg;
+    pc_next_w <== pc_out.pc_out;
     stall_w <== hdu_out.stall;
     {O.pc = mem_wb_out.pc;}
 
