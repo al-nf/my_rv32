@@ -10,6 +10,7 @@ module Make = struct
       pc: 'a [@bits 32];
 
       stall: 'a [@bits 1];
+      flush: 'a [@bits 1];
     } [@@deriving hardcaml]
   end
 
@@ -20,10 +21,15 @@ module Make = struct
     } [@@deriving hardcaml]
   end
 
+  (* On stall we hold the current instruction; on flush we squash it to a
+     NOP.  Flush takes priority over stall. *)
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
-    let en = ~: (i.stall) in {
-      O.instr = reg spec ~enable:en i.instr;
-      O.pc = reg spec ~enable:en i.pc;
-    };
+    let hold = i.stall &: ~: (i.flush) in
+    let en   = ~: hold in
+    let sel x = mux2 i.flush (zero (width x)) x in
+    {
+      O.instr = reg spec ~enable:en (sel i.instr);
+      O.pc    = reg spec ~enable:en (sel i.pc);
+    }
 end

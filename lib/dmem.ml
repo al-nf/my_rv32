@@ -19,18 +19,19 @@ module Make (Config: sig val size: int end) = struct
     } [@@deriving hardcaml]
   end
 
+  (* We want combinational reads so a load completes in one MEM cycle; the
+     MEM/WB register then captures the value for WB.  multiport_memory only
+     offers registered reads, so we roll our own array of word-wide
+     registers with a one-hot write enable and a combinational mux read. *)
   let create _scope (i: _ I.t) =
-    let mem = multiport_memory size
-    ~write_ports:[|{
-        write_clock = i.clk;
-        write_enable = i.mem_wr;
-        write_address = i.address;
-        write_data = i.data_in;
-    }|]
-    ~read_addresses:[|
-      i.address;
-    |]
+    let _ = i.mem_rd in
+    let spec = Reg_spec.create ~clock:i.clk () in
+    let addr = select i.address 11 2 in
+    let cells =
+      Array.init size (fun idx ->
+        let hit = addr ==:. idx in
+        let en  = i.mem_wr &: hit in
+        reg_fb spec ~enable:en ~width:32 ~f:(fun _ -> i.data_in))
     in
-    { O.data_out = mem.(0)};
-
+    { O.data_out = mux addr (Array.to_list cells) }
 end

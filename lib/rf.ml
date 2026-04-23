@@ -22,16 +22,13 @@ module Make = struct
 
   let create _scope (i: _ I.t) =
     let regs = multiport_memory 32
-    ~write_ports:[|{
+      ~write_ports:[|{
         write_clock = i.clk;
         write_enable = i.reg_wr &: (i.rd <>: zero 5);
         write_address = i.rd;
         write_data = i.data_in;
-    }|]
-    ~read_addresses:[|
-      i.rs1;
-      i.rs2;
-    |]
+      }|]
+      ~read_addresses:[| i.rs1; i.rs2 |]
     in
     { O.data_out1 = regs.(0); O.data_out2 = regs.(1) }
 end
