@@ -19,8 +19,6 @@ end) = struct
     } [@@deriving hardcaml]
   end
 
-  (* Read the program once at elaboration time.  We pad short programs with
-     NOPs so the mux domain equals [size]. *)
   let load_program () =
     let ic = open_in program_file in
     let acc = ref [] in

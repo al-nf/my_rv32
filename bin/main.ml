@@ -9,11 +9,11 @@ let count_lines path =
   let ic = open_in path in
   let n = ref 0 in
   (try
-     while true do
-       let line = String.trim (input_line ic) in
-       if line <> "" then incr n
-     done
-   with End_of_file -> ());
+    while true do
+      let line = String.trim (input_line ic) in
+      if line <> "" then incr n
+    done
+  with End_of_file -> ());
   close_in ic;
   !n
 
@@ -22,7 +22,7 @@ let () =
   let size = max 1 (count_lines path) in
   let module Top = Top.Make(struct
     let isize = size
-    let dsize = 1024
+    let dsize = 128
     let program_file = path
   end) in
   let module Circuit = Hardcaml.Circuit.With_interface(Top.I)(Top.O) in

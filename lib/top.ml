@@ -19,7 +19,6 @@ end) = struct
       pc: 'a [@bits 32];
       branch_target_w: 'a [@bits 32];
       actual_taken_w: 'a [@bits 1];
-      (* observability: what WB is committing this cycle *)
       wb_rd: 'a [@bits 5];
       wb_data: 'a [@bits 32];
       wb_reg_wr: 'a [@bits 1];
@@ -76,7 +75,6 @@ end) = struct
       instr = if_id_out.instr;
     } in
 
-    (* Writeback data: either the ALU result or data from memory. *)
     let wb_data =
       mux2 mem_wb_mem_to_reg_w mem_wb_mem_data_w mem_wb_alu_result_w
     in
@@ -134,8 +132,6 @@ end) = struct
       flush = flush_w;
     } in
 
-    (* Forwarding unit: pick operands for EX from EX/MEM, MEM/WB or
-       the register-file read (default). *)
     let fwd_out = Fwd.Make.create _scope { Fwd.Make.I.
       ex_mem_rd = ex_mem_rd_w;
       ex_mem_reg_wr = ex_mem_reg_wr_w;
@@ -146,22 +142,21 @@ end) = struct
     } in
     let forward sel reg_val =
       mux sel [
-        reg_val;              (* 00 no forward *)
-        wb_data;              (* 01 MEM/WB *)
-        ex_mem_alu_result_w;  (* 10 EX/MEM *)
-        reg_val;              (* 11 unused *)
+        reg_val;
+        wb_data;
+        ex_mem_alu_result_w;
+        reg_val;
       ]
     in
     let rs1_fwd = forward fwd_out.forward_a id_ex_out.rs1_data in
     let rs2_fwd = forward fwd_out.forward_b id_ex_out.rs2_data in
 
-    (* ALU operand selection. a: rs1 / PC / zero. b: rs2 / imm. *)
     let alu_a =
       mux id_ex_out.alu_a_sel [
-        rs1_fwd;       (* 00 *)
-        id_ex_out.pc;  (* 01 AUIPC *)
-        zero 32;       (* 10 LUI *)
-        zero 32;       (* 11 unused *)
+        rs1_fwd;
+        id_ex_out.pc;
+        zero 32;
+        zero 32;
       ]
     in
     let alu_b = mux2 id_ex_out.alu_src id_ex_out.imm rs2_fwd in
@@ -179,7 +174,6 @@ end) = struct
       funct3 = id_ex_out.funct3;
     } in
 
-    (* Branch resolution is combinational in EX. *)
     let actual_taken =
       (id_ex_out.branch &: branch_cmp_out.taken)
       |: id_ex_out.jal
@@ -195,7 +189,6 @@ end) = struct
     branch_target_w <== branch_target;
     flush_w <== actual_taken;
 
-    (* For JAL/JALR, rd := pc+4; route that through the ALU result path. *)
     let link_value = id_ex_out.pc +:. 4 in
     let result_to_mem = mux2 id_ex_out.link link_value alu_out.result in
 
