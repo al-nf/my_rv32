@@ -7,3 +7,5 @@ _opam/
 # OCaml tooling
 .merlin
 *.install
+
+test/top.v
