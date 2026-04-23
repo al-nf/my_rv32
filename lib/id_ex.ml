@@ -21,6 +21,7 @@ module Make = struct
       arith: 'a; [@bits 1]
       alu_src: 'a; [@bits 1]
       alu_a_sel: 'a; [@bits 2]
+      alu_funct3: 'a; [@bits 3]
       link: 'a; [@bits 1]
       mem_to_reg: 'a; [@bits 1]
       rs1_data: 'a; [@bits 32]
@@ -47,6 +48,7 @@ module Make = struct
       arith: 'a; [@bits 1]
       alu_src: 'a; [@bits 1]
       alu_a_sel: 'a; [@bits 2]
+      alu_funct3: 'a; [@bits 3]
       link: 'a; [@bits 1]
       mem_to_reg: 'a; [@bits 1]
       rs1_data: 'a; [@bits 32]
@@ -77,6 +79,7 @@ module Make = struct
       O.arith = reg spec (sel i.arith);
       O.alu_src = reg spec (sel i.alu_src);
       O.alu_a_sel = reg spec (sel i.alu_a_sel);
+      O.alu_funct3 = reg spec (sel i.alu_funct3);
       O.link = reg spec (sel i.link);
       O.mem_to_reg = reg spec (sel i.mem_to_reg);
       O.rs1_data = reg spec (sel i.rs1_data);

@@ -5,11 +5,11 @@ let count_lines path =
   let ic = open_in path in
   let n = ref 0 in
   (try
-     while true do
-       let line = String.trim (input_line ic) in
-       if line <> "" then incr n
-     done
-   with End_of_file -> ());
+    while true do
+      let line = String.trim (input_line ic) in
+        if line <> "" then incr n
+    done
+  with End_of_file -> ());
   close_in ic;
   max 1 !n
 
@@ -48,35 +48,88 @@ let run ~label ~program_file ~cycles ~expected =
   if !ok then Printf.printf "[%s] PASS\n" label
 
 let () =
-  (* Baseline: two BEQs that both fall through to the target. *)
   run ~label:"beq"
-      ~program_file:"program.hex"
+      ~program_file:"program_beq.hex"
       ~cycles:50
       ~expected:[
-        1, 0;  (* addi x1, x0, 0 *)
-        2, 0;  (* addi x2, x0, 0 *)
-        3, 0;  (* flushed after taken beq *)
-        4, 7;  (* addi x4, x0, 7 *)
-        5, 0;  (* flushed after taken beq *)
+        1, 0;
+        2, 0;
+        3, 0;
+        4, 7;
+        5, 0;
       ];
 
-  (* Signed comparison: exercises <+ vs <: in branch_cmp. *)
   run ~label:"blt-signed"
       ~program_file:"program_blt.hex"
       ~cycles:50
       ~expected:[
-        1, 0xFFFFFFFF; (* x1 = -1 *)
+        1, 0xFFFFFFFF;
         2, 1;
-        3, 0;          (* skipped if BLT is signed: -1 < 1 is true *)
+        3, 0;
         4, 7;
       ];
 
-  (* Forwarding: each addi depends on its predecessor. *)
   run ~label:"forward"
       ~program_file:"program_fwd.hex"
       ~cycles:50
       ~expected:[
         1, 5;
-        2, 8;  (* 5 + 3, needs x1 forwarded from EX/MEM *)
-        3, 9;  (* 8 + 1, needs x2 forwarded from EX/MEM *)
+        2, 8;
+        3, 9;
+      ];
+
+  run ~label:"ls"
+      ~program_file:"program_ls.hex"
+      ~cycles:50
+      ~expected:[
+        1, 7;
+        2, 7;
+        3, 8;
+      ];
+
+  run ~label:"ls-offset"
+      ~program_file:"program_ls_off.hex"
+      ~cycles:50
+      ~expected:[
+        1, 42;
+        2, 42;
+        3, 43;
+      ];
+
+  run ~label:"alu"
+      ~program_file:"program_alu.hex"
+      ~cycles:60
+      ~expected:[
+        1,  5;
+        2,  0xFFFFFFFE;
+        3,  7;
+        4,  0xA0; 
+        5,  0x07FFFFFF;
+        6,  0xFFFFFFFF;
+        7,  0xFFFFFFFB;
+        8,  0xFFFFFFFF;
+        9,  4;
+        10, 1;
+      ];
+
+  run ~label:"lui-auipc"
+      ~program_file:"program_lui.hex"
+      ~cycles:50
+      ~expected:[
+        1, 0x12345000;
+        2, 0x00000004; 
+        3, 0x00001008;
+      ];
+
+  run ~label:"jump"
+      ~program_file:"program_jump.hex"
+      ~cycles:50
+      ~expected:[
+        1,  0x04;
+        2,  0x10;
+        3,  0x04;
+        4,  0x10;
+        6,  20;
+        10, 0;
+        11, 0;
       ]

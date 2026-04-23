@@ -1,4 +1,4 @@
 (test
  (name test_my_rv32)
  (libraries my_rv32 hardcaml_waveterm)
- (deps program.hex program_blt.hex program_fwd.hex))
+ (deps (glob_files *.hex)))

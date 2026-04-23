@@ -24,6 +24,7 @@ module Make = struct
       arith: 'a; [@bits 1]      (* bit 30 of instr, only valid when the op actually uses it *)
       alu_src: 'a; [@bits 1]    (* 0 -> rs2_data, 1 -> imm *)
       alu_a_sel: 'a; [@bits 2]  (* 00 rs1, 01 pc (AUIPC), 10 zero (LUI), 11 unused *)
+      alu_funct3: 'a; [@bits 3] (* funct3 the ALU should act on; non-ALU ops force ADD *)
       link: 'a; [@bits 1]       (* write pc+4 to rd (JAL/JALR) *)
       mem_to_reg: 'a; [@bits 1]
     } [@@deriving hardcaml]
@@ -65,6 +66,10 @@ module Make = struct
         mux2 is_lui (of_int ~width:2 0b10)
        (mux2 is_auipc (of_int ~width:2 0b01)
                       (of_int ~width:2 0b00));
+      (* R-type / I-type ALU genuinely use funct3 for op select; everything
+         else (loads, stores, AUIPC, LUI, JAL, JALR, branches) needs an ADD
+         for address / link calculation regardless of what instr[14:12] says. *)
+      O.alu_funct3 = mux2 (is_r_type |: is_i_alu) funct3 (zero 3);
       O.link = is_jal |: is_jalr;
       O.mem_to_reg = is_load;
     }

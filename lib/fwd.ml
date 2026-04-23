@@ -15,10 +15,12 @@ module Make = struct
 
   module O = struct
     type 'a t = {
-      (* 00 no forwarding
-         01 forward from MEM/WB
-         10 forward from EX/MEM
-         11 unused *)
+      (*
+        00 no forwarding
+        01 forward from MEM/WB
+        10 forward from EX/MEM
+        11 unused
+      *)
       forward_a: 'a; [@bits 2]
       forward_b: 'a; [@bits 2]
     } [@@deriving hardcaml]

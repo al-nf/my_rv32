@@ -25,11 +25,11 @@ end) = struct
     let ic = open_in program_file in
     let acc = ref [] in
     (try
-       while true do
-         let line = String.trim (input_line ic) in
-         if line <> "" then acc := line :: !acc
-       done
-     with End_of_file -> ());
+      while true do
+        let line = String.trim (input_line ic) in
+        if line <> "" then acc := line :: !acc
+      done
+    with End_of_file -> ());
     close_in ic;
     let words = List.rev !acc in
     let nop = "00000013" in

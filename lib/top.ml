@@ -27,7 +27,6 @@ end) = struct
   end
 
   let create _scope (i: _ I.t) =
-    (* feedback wires -- resolved after each producer is built *)
     let id_ex_mem_rd_w = wire 1 in
     let id_ex_rd_w = wire 5 in
     let ex_mem_rd_w = wire 5 in
@@ -98,14 +97,13 @@ end) = struct
       if_id_rs2 = select if_id_out.instr 24 20;
     } in
 
-    (* Immediate mux -- one operand out of the sign-extender's five forms. *)
     let imm_sel =
       mux2 (id_out.opcode ==:. 0b0100011) se_out.imm_s
-     (mux2 (id_out.opcode ==:. 0b1100011) se_out.imm_b
-     (mux2 (id_out.opcode ==:. 0b0110111) se_out.imm_u
-     (mux2 (id_out.opcode ==:. 0b0010111) se_out.imm_u
-     (mux2 (id_out.opcode ==:. 0b1101111) se_out.imm_j
-      se_out.imm_i))))
+      (mux2 (id_out.opcode ==:. 0b1100011) se_out.imm_b
+        (mux2 (id_out.opcode ==:. 0b0110111) se_out.imm_u
+          (mux2 (id_out.opcode ==:. 0b0010111) se_out.imm_u
+            (mux2 (id_out.opcode ==:. 0b1101111) se_out.imm_j
+              se_out.imm_i))))
     in
 
     let id_ex_out = Id_ex.Make.create _scope { Id_ex.Make.I.
@@ -126,6 +124,7 @@ end) = struct
       arith = id_out.arith;
       alu_src = id_out.alu_src;
       alu_a_sel = id_out.alu_a_sel;
+      alu_funct3 = id_out.alu_funct3;
       link = id_out.link;
       mem_to_reg = id_out.mem_to_reg;
       rs1_data = rf_out.data_out1;
@@ -170,7 +169,7 @@ end) = struct
     let alu_out = Alu.Make.create _scope { Alu.Make.I.
       a = alu_a;
       b = alu_b;
-      funct3 = id_ex_out.funct3;
+      funct3 = id_ex_out.alu_funct3;
       arith = id_ex_out.arith;
     } in
 
@@ -215,7 +214,6 @@ end) = struct
       mem_to_reg = id_ex_out.mem_to_reg;
       alu_result = result_to_mem;
       rs2_data = rs2_fwd;
-      stall = stall_w;
     } in
 
     let module Dmem = Dmem.Make(struct let size = dsize end) in

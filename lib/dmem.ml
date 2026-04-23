@@ -19,10 +19,6 @@ module Make (Config: sig val size: int end) = struct
     } [@@deriving hardcaml]
   end
 
-  (* We want combinational reads so a load completes in one MEM cycle; the
-     MEM/WB register then captures the value for WB.  multiport_memory only
-     offers registered reads, so we roll our own array of word-wide
-     registers with a one-hot write enable and a combinational mux read. *)
   let create _scope (i: _ I.t) =
     let _ = i.mem_rd in
     let spec = Reg_spec.create ~clock:i.clk () in

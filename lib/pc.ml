@@ -4,11 +4,11 @@ open Signal
 module Make = struct
   module I = struct
     type 'a t = {
-       clk: 'a [@bits 1];
-       rst: 'a [@bits 1];
-       pc_in: 'a [@bits 32];
-       pc_wr: 'a [@bits 1];
-       stall: 'a [@bits 1];
+      clk: 'a [@bits 1];
+      rst: 'a [@bits 1];
+      pc_in: 'a [@bits 32];
+      pc_wr: 'a [@bits 1];
+      stall: 'a [@bits 1];
     } [@@deriving hardcaml]
   end
 
