@@ -57,9 +57,6 @@ module Make = struct
     } [@@deriving hardcaml]
   end
 
-  (* On stall (load-use hazard) we inject a NOP bubble into ID/EX: the IF/ID
-     and PC hold the dependent instruction; ID/EX's control signals are
-     cleared so the load gets one extra cycle before the consumer issues. *)
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
     let clear = i.stall |: i.flush in

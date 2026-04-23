@@ -31,12 +31,6 @@ module Make = struct
       }|]
       ~read_addresses:[| i.rs1; i.rs2 |]
     in
-    (* Write-first semantics: if WB is committing to the same register we are
-       reading this cycle, return the incoming data directly.  Without this,
-       an instruction in ID whose operand is being written by WB on the same
-       cycle would read the stale value -- and by the time the written value
-       is visible in the array, the producing instr has already left MEM/WB
-       and the forwarding unit can't recover it. *)
     let bypass rs raw =
       mux2 (write_enable &: (rs ==: i.rd)) i.data_in raw
     in

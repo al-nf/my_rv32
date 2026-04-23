@@ -21,8 +21,6 @@ module Make = struct
     } [@@deriving hardcaml]
   end
 
-  (* On stall we hold the current instruction; on flush we squash it to a
-     NOP.  Flush takes priority over stall. *)
   let create _scope (i: _ I.t) =
     let spec = Reg_spec.create ~clock:i.clk ~reset:i.rst () in
     let hold = i.stall &: ~: (i.flush) in

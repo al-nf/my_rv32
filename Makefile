@@ -1,7 +1,5 @@
 OPAM_ENV  := $(shell opam env --switch=default 2>/dev/null)
 
-# Homebrew keeps zlib keg-only; some hardcaml transitive deps link -lz,
-# and without this the ocaml toolchain can't find libz.dylib on macOS.
 BREW_ZLIB := $(shell brew --prefix zlib 2>/dev/null)
 ifneq ($(BREW_ZLIB),)
   LIB_PATH_EXPORT := LIBRARY_PATH="$(BREW_ZLIB)/lib:$$LIBRARY_PATH" \

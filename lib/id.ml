@@ -57,18 +57,12 @@ module Make = struct
       O.branch = is_branch;
       O.jal = is_jal;
       O.jalr = is_jalr;
-      (* instr[30] only actually encodes ADD/SUB or SRL/SRA; for everything else it's
-         an immediate bit that must not leak into the ALU control. *)
       O.arith = (select i.instr 30 30) &: (is_r_type |: is_shift_imm);
-      (* R-type reads rs2; everything else that uses the ALU uses an immediate. *)
       O.alu_src = ~: is_r_type;
       O.alu_a_sel =
         mux2 is_lui (of_int ~width:2 0b10)
-       (mux2 is_auipc (of_int ~width:2 0b01)
+        (mux2 is_auipc (of_int ~width:2 0b01)
                       (of_int ~width:2 0b00));
-      (* R-type / I-type ALU genuinely use funct3 for op select; everything
-         else (loads, stores, AUIPC, LUI, JAL, JALR, branches) needs an ADD
-         for address / link calculation regardless of what instr[14:12] says. *)
       O.alu_funct3 = mux2 (is_r_type |: is_i_alu) funct3 (zero 3);
       O.link = is_jal |: is_jalr;
       O.mem_to_reg = is_load;
